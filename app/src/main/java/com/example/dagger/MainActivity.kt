@@ -36,6 +36,9 @@ class MainActivity : AppCompatActivity() {
         val emailService = EmailService()
 
         val userRegistrationService = UserRegistrationService(userRepository, emailService)
+        //reqd dependency (userRepository, emailService) is passed to
+         UserRegistrationService class  via constructor
+         so, THIS IS CALLED CONSTRUCTOR DEPENDENCY INJECTION
 
         THIS IS CALLED MANUAL DEPENDENCY INJECTION
         bcoz we are manually injecting , if there are 10 activity then we have to create obj 10 times
