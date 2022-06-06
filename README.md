@@ -2,8 +2,11 @@
 
 
 Consumers  ----> Component -----> via Constructor
+
                           |
-                          |----->via  Modules
+                          
+                          |
+                          ----->via  Modules
 
 =>modules create object containing abstract class, interface, builder pattern( In case of roomdb, retrofit),
   modules are the producers
