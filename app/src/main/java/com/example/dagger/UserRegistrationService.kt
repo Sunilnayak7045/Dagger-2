@@ -1,6 +1,13 @@
 package com.example.dagger
 
-class UserRegistrationService(private val userRepository: UserRepository ,
+import javax.inject.Inject
+
+
+//whenever we reqd UserRegistrationService class obj call the constructor
+//UserRegistrationService class is dependent on UserRepository & EmailService class
+// so inject is used on UserRepository & EmailService class
+//flow will be 1st UserRepository & EmailService obj will be created then UserRegistrationService obj
+class UserRegistrationService @Inject constructor (private val userRepository: UserRepository ,
                               private val emailService: EmailService
 ) {
 
