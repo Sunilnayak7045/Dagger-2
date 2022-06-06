@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
         val userRepository = UserRepository()
         val emailService = EmailService()
 
+        val userRegistrationService = UserRegistrationService(userRepository, emailService)
+
         THIS IS CALLED MANUAL DEPENDENCY INJECTION
         bcoz we are manually injecting , if there are 10 activity then we have to create obj 10 times
  */
