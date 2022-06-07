@@ -22,7 +22,9 @@
   
 METHOD 2 :
          --> define field for reqd object
-         ( @Inject
+         
+         ( 
+         @Inject
          lateinit var userRegistrationService: UserRegistrationService  ) ,
 
          --> whenever the component having inject method is called
