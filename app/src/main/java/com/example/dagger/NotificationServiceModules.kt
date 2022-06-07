@@ -8,7 +8,7 @@ import javax.inject.Named
 @Module
 class NotificationServiceModules {
 
-    @Named("message")
+    @MessageQualifier
     //just a normal function that will just return object
     @Provides
     fun getMessageService() : NotificationService {

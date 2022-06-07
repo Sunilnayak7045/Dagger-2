@@ -10,7 +10,8 @@ import javax.inject.Named
 //flow will be 1st UserRepository & EmailService obj will be created then UserRegistrationService obj
 class UserRegistrationService @Inject constructor (
     private val userRepository: UserRepository ,
-    @Named("message") private val notificationService: NotificationService
+
+    @MessageQualifier private val notificationService: NotificationService
 ) {
 
     fun register(email: String, password: String){
