@@ -5,11 +5,20 @@ import android.util.Log
 import javax.inject.Inject
 
 
+interface UserRepository{
+    fun saveUser(email: String, password: String)
+}
+
 //whenever we reqd UserRepository class obj call the constructor
-class UserRepository  @Inject constructor () {
+class SqlRepository  @Inject constructor () : UserRepository{
 
+    override fun saveUser(email: String, password: String){
+       Log.d( "DB","User saved in Sql db ")
+    }
+}
+class FirebaseRepository   : UserRepository{
 
-    fun saveUser(email: String, password: String){
-       Log.d( "DB","User saved in db")
+    override fun saveUser(email: String, password: String){
+       Log.d( "Firebase","User saved in Firebase")
     }
 }

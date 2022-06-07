@@ -2,7 +2,7 @@ package com.example.dagger
 
 import dagger.Component
 
-@Component
+@Component(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
 interface UserRegistrationComponent {
 
     //methods  that will provide the reqd dependency

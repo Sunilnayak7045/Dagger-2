@@ -7,13 +7,14 @@ import javax.inject.Inject
 //UserRegistrationService class is dependent on UserRepository & EmailService class
 // so inject is used on UserRepository & EmailService class
 //flow will be 1st UserRepository & EmailService obj will be created then UserRegistrationService obj
-class UserRegistrationService @Inject constructor (private val userRepository: UserRepository ,
-                              private val emailService: EmailService
+class UserRegistrationService @Inject constructor (
+    private val userRepository: UserRepository ,
+    private val notificationService: NotificationService
 ) {
 
     fun register(email: String, password: String){
         userRepository.saveUser(email, password)
-        emailService.send(email,"abc@gmail.com","user registered successfully")
+        notificationService.send(email,"abc@gmail.com","user registered successfully")
     }
 
 }
