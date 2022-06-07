@@ -5,8 +5,17 @@ import dagger.Component
 @Component
 interface UserRegistrationComponent {
 
-    fun getUserRegistrationService() : UserRegistrationService
-    fun getEmailService() : EmailService
+    //methods  that will provide the reqd dependency
+   // fun getUserRegistrationService() : UserRegistrationService
+   // fun getEmailService() : EmailService
+
+    //here consumer is mainActivity, now we don't reqd getUserRegistrationService(), getEmailService()
+    //all the task will be handled by inject method
+    //flow till now ---> in this fun we have passed the obj
+    //              ---> it will go to main activity & see where the Inject annotation is there
+    //              ---> @Inject used in field determine we need injection in these field
+    //              ---> @Inject used in constructor determine we tell to dagger how the obj is being created
+    fun inject(mainActivity: MainActivity)
 }
 
 
