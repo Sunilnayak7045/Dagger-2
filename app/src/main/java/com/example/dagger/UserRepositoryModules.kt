@@ -5,17 +5,17 @@ import dagger.Module
 import dagger.Provides
 
 @Module
- class UserRepositoryModules {
+abstract class UserRepositoryModules {
 
-    @Provides
-    fun getFirebaseRepository() : UserRepository {
+   // @Provides
+   // fun getFirebaseRepository() : UserRepository {
         //return type is UserRepository which returns FirebaseRepository() obj
         // it will tell dagger to use FirebaseRepository
         // @Provides annotation means whenever the UserRepository request is triggered,
         // it will called  getFirebaseRepository() fun and return FirebaseRepository() obj
 
-        return FirebaseRepository()
-    }
+   //     return FirebaseRepository()
+   // }
 
 //Method 2 to return  SqlRepository() obj via @Provides
 
@@ -26,8 +26,8 @@ import dagger.Provides
 
 //    Method 3 to return  SqlRepository() obj via @Binds
 
- //    @Binds
-//    abstract fun getSQLRepository(sqlRepository: SqlRepository) : UserRepository
+     @Binds
+    abstract fun getSQLRepository(sqlRepository: SqlRepository) : UserRepository
 
 }
 
