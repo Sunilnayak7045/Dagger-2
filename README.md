@@ -17,4 +17,17 @@
 
          --> THEN we will call it an activity.
          ( val userRegistrationService = component.getUserRegistrationService() )
+         
+         
+  
+METHOD 2 :
+         --> define field for reqd object
+         ( @Inject
+         lateinit var userRegistrationService: UserRegistrationService  ) ,
+
+         --> whenever the component having inject method is called
+         (  component.inject(this) ),
+          fields will get initialize.
+
+         this is called fields injection
  
