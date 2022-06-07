@@ -2,12 +2,13 @@ package com.example.dagger
 
 import dagger.Module
 import dagger.Provides
+import javax.inject.Named
 
 
 @Module
 class NotificationServiceModules {
 
-
+    @Named("message")
     //just a normal function that will just return object
     @Provides
     fun getMessageService() : NotificationService {
@@ -17,6 +18,14 @@ class NotificationServiceModules {
         // it will called  getMessageService() fun and return MessageService() obj
 
         return MessageService()
+    }
+
+
+    @Named("email")
+    @Provides
+    fun getEmailService(emailService: EmailService) : NotificationService {
+
+        return EmailService()
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.dagger
 
 import javax.inject.Inject
+import javax.inject.Named
 
 
 //whenever we reqd UserRegistrationService class obj call the constructor
@@ -9,7 +10,7 @@ import javax.inject.Inject
 //flow will be 1st UserRepository & EmailService obj will be created then UserRegistrationService obj
 class UserRegistrationService @Inject constructor (
     private val userRepository: UserRepository ,
-    private val notificationService: NotificationService
+    @Named("message") private val notificationService: NotificationService
 ) {
 
     fun register(email: String, password: String){
