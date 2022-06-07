@@ -1,21 +1,65 @@
-# Dagger-2 Module-Provides-Binds
+# Dagger-2 Named-Annotation (Inbuilt-Qualifiers)
 
 
-If a interface has multiple implementation
+Before:
 
-Step 1:
-When @Inject is called dagger will get confused i.e from NotificationService which implementation should be picked (EmailService  or MessageService)
-it will throw error:
-error: [Dagger/MissingBinding] com.example.dagger.NotificationService cannot be provided without an @Provides-annotated method.
+@Module
+class NotificationServiceModules {
+
+    @Provides
+    fun getMessageService() : NotificationService {
+        return MessageService()
+    }
+
+    @Provides
+    fun getEmailService(emailService: EmailService) : NotificationService {
+
+        return EmailService()
+    }
+
+}
+
+error: [Dagger/DuplicateBinding] 
+because NotificationService is bound with both fun getMessageService() & getEmailService() which will return NotificationService obj,
+Dagger will get confused which NotificationService should be used
+
+so we use Qualifiers (@Named Annotation)
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+SOLUTION:
+
+STEP 1:
+
+@Module
+class NotificationServiceModules {
+
+    @Named("message")
+    @Provides
+    fun getMessageService() : NotificationService {
+        return MessageService()
+    }
+
+
+    @Named("email")
+    @Provides
+    fun getEmailService(emailService: EmailService) : NotificationService {
+
+        return EmailService()
+    }
+
+}
 
 
 
-class UserRegistrationService @Inject constructor
-(
+STEP 2: 
+
+class UserRegistrationService @Inject constructor (
 
     private val userRepository: UserRepository ,
     
-    private val notificationService: NotificationService
+    @Named("message") private val notificationService: NotificationService
     
 ) {
 
@@ -27,37 +71,9 @@ class UserRegistrationService @Inject constructor
 }
 
 
+---------------------------------------------------------------------------------------------------------------------------------------------
 
-Step 2:
-
-=>Consumers will tell Component to create obj , 
-Component will create obj with the help of Constructor & Modules(containing abstract class, interface, builder pattern( In case of roomdb, retrofit)).
-but we cannot instantiate an interface i.e we cannot create obj. 
-Generally, it contains abstract methods (except default and static methods introduced in Java8), which are incomplete
-
-
-
-interface NotificationService{
-
-    fun send(to: String, from: String, body: String)
-    
-}
-
-class EmailService  @Inject constructor () : NotificationService {
-
-    override fun send(to: String, from: String, body: String){
-    
-        Log.d( "email sendinggggg","Email Send")
-        
-    }
-}
-
-class MessageService  @Inject constructor () : NotificationService {
-
-    override fun send(to: String, from: String, body: String){
-    
-        Log.d( "Message sendinggggg","Message Send")
-        
-    }
-}
+Problem with @Named Annotation is if there is spelling mistake in @Named annotation (e.g @Named("message") )
+then it will throw error: [Dagger/MissingBinding]
+so we use custom Annotation 
 
