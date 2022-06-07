@@ -9,9 +9,14 @@ it will throw error:
 error: [Dagger/MissingBinding] com.example.dagger.NotificationService cannot be provided without an @Provides-annotated method.
 
 
-class UserRegistrationService @Inject constructor (
+
+class UserRegistrationService @Inject constructor
+(
+
     private val userRepository: UserRepository ,
+    
     private val notificationService: NotificationService
+    
 ) {
 
     fun register(email: String, password: String){
@@ -33,18 +38,26 @@ Generally, it contains abstract methods (except default and static methods intro
 
 
 interface NotificationService{
+
     fun send(to: String, from: String, body: String)
+    
 }
 
 class EmailService  @Inject constructor () : NotificationService {
+
     override fun send(to: String, from: String, body: String){
+    
         Log.d( "email sendinggggg","Email Send")
+        
     }
 }
 
 class MessageService  @Inject constructor () : NotificationService {
+
     override fun send(to: String, from: String, body: String){
+    
         Log.d( "Message sendinggggg","Message Send")
+        
     }
 }
 
