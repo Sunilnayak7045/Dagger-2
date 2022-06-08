@@ -6,7 +6,7 @@ import javax.inject.Named
 
 
 @Module
-class NotificationServiceModules {
+class NotificationServiceModules(private val retryCount : Int) {
 
     @MessageQualifier
     //just a normal function that will just return object
@@ -17,7 +17,7 @@ class NotificationServiceModules {
         // @Provides annotation means whenever the NotificationService request is triggered,
         // it will called  getMessageService() fun and return MessageService() obj
 
-        return MessageService()
+        return MessageService(retryCount)
     }
 
 

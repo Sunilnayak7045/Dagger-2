@@ -18,7 +18,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // whenever we want userRegistrationService obj we will call given below code
-        val component = DaggerUserRegistrationComponent.builder().build()
+        val component = DaggerUserRegistrationComponent
+            .builder()
+            .notificationServiceModules(NotificationServiceModules(3))
+            .build()
         component.inject(this)
 
         //val userRegistrationService = component.getUserRegistrationService() // not reqd bcoz it is handled by inject method
