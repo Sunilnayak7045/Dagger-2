@@ -30,6 +30,10 @@ until the application runs we will have component,
 inside the component the  Singleton obj maintained  i.e obj will have same hexcode.
 
 
+![Screenshot (36)](https://user-images.githubusercontent.com/47368515/172614819-f6ce2d8e-7807-4227-a158-aaf4d0423a23.png)
+
+On screen rotation the hexcode value will get change
+
 
 Case 1 : 
 
@@ -82,6 +86,7 @@ class EmailService  @Inject constructor () : NotificationService {
 
 @Singleton
 @Component(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+
 interface UserRegistrationComponent {
 
 
