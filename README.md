@@ -1,63 +1,95 @@
-# Dagger-2 Module-Provides-Binds
+# Dagger-2 Activity-level Singleton
 
 
-If a interface has multiple implementation
+Singleton:
 
-Step 1:
-When @Inject is called dagger will get confused i.e from NotificationService which implementation should be picked (EmailService  or MessageService)
-it will throw error:
-error: [Dagger/MissingBinding] com.example.dagger.NotificationService cannot be provided without an @Provides-annotated method.
+Just one instance i.e Single Object for the whole application
 
+accessing obj through component ->  use @Singleton  annotation on the component also
 
 
-class UserRegistrationService @Inject constructor
-(
 
-    private val userRepository: UserRepository ,
-    
-    private val notificationService: NotificationService
-    
-) {
+@Singleton has a scope 
 
-    fun register(email: String, password: String){
-        userRepository.saveUser(email, password)
-        notificationService.send(email,"abc@gmail.com","user registered successfully")
+e.g Singleton obj define in component, so  @Singleton  defines a scope, 
+if we access that obj outside the scope, it will create new obj
+
+i.e if  component defined in activity, then if the activity is created again then due to screen rotation  then it will create new obj,
+here Singleton obj  has a boundaries, i.e component
+
+solution could be applicationlevel Singleton 
+
+because applicationlevel is the top level then activity is created then fragments are created. 
+
+activity & fragments are created and destroyed but the application runs. so applicationlevel Singleton  is preferred.
+
+so defined component in application, 
+
+until the application runs we will have component, 
+
+inside the component the  Singleton obj maintained  i.e obj will have same hexcode.
+
+
+
+Case 1 : 
+
+**if we want this NotificationService obj as singleton
+
+    @Singleton
+    @MessageQualifier
+    @Provides
+    fun getMessageService(retryCount : Int )  : NotificationService {
+        return MessageService(retryCount)
     }
 
-}
+
+Case 2 :
+
+**if we want this EmailService obj as singleton
+
+==================MainActivity.kt=========
 
 
+    lateinit var emailService: EmailService
 
-Step 2:
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-=>Consumers will tell Component to create obj , 
-Component will create obj with the help of Constructor & Modules(containing abstract class, interface, builder pattern( In case of roomdb, retrofit)).
-but we cannot instantiate an interface i.e we cannot create obj. 
-Generally, it contains abstract methods (except default and static methods introduced in Java8), which are incomplete
+        val component = DaggerUserRegistrationComponent.factory().create(3)
+        component.inject(this)
+        userRegistrationService.register("test123@gmail.com","1111")
 
+    }
 
+/* Ctrl+click on EmailService, but we have inject on  EmailService  class so create singleton on the component also.
+/* so Ctrl+click on inject (line having component.inject)
 
-interface NotificationService{
+============ EmailService.kt=========  
 
-    fun send(to: String, from: String, body: String)
-    
-}
+@Singleton
 
 class EmailService  @Inject constructor () : NotificationService {
 
     override fun send(to: String, from: String, body: String){
-    
         Log.d( "email sendinggggg","Email Send")
-        
     }
 }
 
-class MessageService  @Inject constructor () : NotificationService {
 
-    override fun send(to: String, from: String, body: String){
-    
-        Log.d( "Message sendinggggg","Message Send")
-        
+============ UserRegistrationComponent.kt=========  
+
+
+@Singleton
+@Component(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+interface UserRegistrationComponent {
+
+
+    fun inject(mainActivity: MainActivity)
+
+
+    @Component.Factory
+    interface Factory{
+        fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
     }
 }
-
