@@ -1,63 +1,95 @@
-# Dagger-2 Module-Provides-Binds
+# Dagger-2 Pass the value at run-time via Component
 
 
-If a interface has multiple implementation
+val db = Room.databaseBuilder(applicationContext, AppDatabase::class.java,"db_name")
+.build()
 
-Step 1:
-When @Inject is called dagger will get confused i.e from NotificationService which implementation should be picked (EmailService  or MessageService)
-it will throw error:
-error: [Dagger/MissingBinding] com.example.dagger.NotificationService cannot be provided without an @Provides-annotated method.
+//we get the applicationContext on runtime
 
+// if we want roomdb obj through dagger, so we need method to tell dagger that some value we will be getting through run-time
 
+// during run-time we will provide value to dagger, dagger will create the obj and give it to us
 
-class UserRegistrationService @Inject constructor
-(
+while building component, check whether which modules is accepting the properties, 
 
-    private val userRepository: UserRepository ,
-    
-    private val notificationService: NotificationService
-    
-) {
-
-    fun register(email: String, password: String){
-        userRepository.saveUser(email, password)
-        notificationService.send(email,"abc@gmail.com","user registered successfully")
-    }
-
-}
+if we found properties then we have to make modules(val component = DaggerUserRegistrationComponent.builder()
+            .notificationServiceModules(NotificationServiceModules(3)) //3 is the dynamic value passed
+            .build() ) in activity
 
 
 
-Step 2:
 
-=>Consumers will tell Component to create obj , 
-Component will create obj with the help of Constructor & Modules(containing abstract class, interface, builder pattern( In case of roomdb, retrofit)).
-but we cannot instantiate an interface i.e we cannot create obj. 
-Generally, it contains abstract methods (except default and static methods introduced in Java8), which are incomplete
+Method 1: 
 
+pass value via Modules
 
+===EmailService.kt file===
 
-interface NotificationService{
-
-    fun send(to: String, from: String, body: String)
-    
-}
-
-class EmailService  @Inject constructor () : NotificationService {
+class MessageService(private val retryCount : Int)  : NotificationService {
 
     override fun send(to: String, from: String, body: String){
     
-        Log.d( "email sendinggggg","Email Send")
+        Log.d( "Message sendinggggg","Message Send === $retryCount")
         
     }
-}
-
-class MessageService  @Inject constructor () : NotificationService {
-
-    override fun send(to: String, from: String, body: String){
     
-        Log.d( "Message sendinggggg","Message Send")
-        
+}
+
+
+===NotificationServiceModule.kt file===
+
+@Module
+
+class NotificationServiceModules(private val retryCount : Int) {
+
+    @MessageQualifier
+    @Provides
+    fun getMessageService() : NotificationService {
+
+        return MessageService(retryCount)
+    }
+
+===MainActivity.kt file===
+
+val component = DaggerUserRegistrationComponent
+                .builder()
+                .notificationServiceModules(NotificationServiceModules(3))
+                .build() 
+                //3 is the dynamic value passed
+            
+
+
+
+Method 2:
+
+pass value via Component (@BindsInstance )
+
+===UserRegistrationComponent.kt file===
+
+@Component(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+
+interface UserRegistrationComponent {
+
+    @Component.Factory
+    interface Factory{
+        fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
     }
 }
+
+
+===NotificationServiceModule.kt file===
+
+@Module
+class NotificationServiceModules() {
+
+    @MessageQualifier
+    @Provides
+    fun getMessageService(retryCount : Int) : NotificationService {
+
+        return MessageService(retryCount)
+    }
+
+===MainActivity.kt file===
+
+val component = DaggerUserRegistrationComponent.factory().create(3)
 
