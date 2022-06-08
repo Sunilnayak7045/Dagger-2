@@ -10,7 +10,8 @@ interface UserRepository{
     fun saveUser(email: String, password: String)
 }
 
-@Singleton
+
+@ApplicationScope
 //whenever we reqd UserRepository class obj call the constructor
 class SqlRepository  @Inject constructor () : UserRepository{
 
