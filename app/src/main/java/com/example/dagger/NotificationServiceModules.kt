@@ -3,11 +3,14 @@ package com.example.dagger
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
+import javax.inject.Singleton
 
 
 @Module
 class NotificationServiceModules() {
 
+
+    @Singleton
     @MessageQualifier
     //just a normal function that will just return object
     @Provides

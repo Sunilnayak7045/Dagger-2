@@ -3,12 +3,14 @@ package com.example.dagger
 
 import android.util.Log
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
 interface UserRepository{
     fun saveUser(email: String, password: String)
 }
 
+@Singleton
 //whenever we reqd UserRepository class obj call the constructor
 class SqlRepository  @Inject constructor () : UserRepository{
 

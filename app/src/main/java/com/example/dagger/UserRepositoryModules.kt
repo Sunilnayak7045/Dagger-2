@@ -3,6 +3,7 @@ package com.example.dagger
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 abstract class UserRepositoryModules {
@@ -26,6 +27,7 @@ abstract class UserRepositoryModules {
 
 //    Method 3 to return  SqlRepository() obj via @Binds
 
+    @Singleton
      @Binds
     abstract fun getSQLRepository(sqlRepository: SqlRepository) : UserRepository
 
