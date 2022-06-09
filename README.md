@@ -1,63 +1,125 @@
-# Dagger-2 Module-Provides-Binds
+# Dagger-2cSub Component
+
+Before:
+
+========UserRegistrationComponent.kt===== 
+
+@ActivityScope
+
+@Subcomponent(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+
+interface UserRegistrationComponent {
+
+    fun inject(mainActivity: MainActivity)
+
+    @Subcomponent.Factory
+    interface Factory{
+        fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
+    }
+}
+
+=========NotificationServiceModules.kt=====
 
 
-If a interface has multiple implementation
 
-Step 1:
-When @Inject is called dagger will get confused i.e from NotificationService which implementation should be picked (EmailService  or MessageService)
-it will throw error:
-error: [Dagger/MissingBinding] com.example.dagger.NotificationService cannot be provided without an @Provides-annotated method.
+@Module
+class NotificationServiceModules() {
 
-
-
-class UserRegistrationService @Inject constructor
-(
-
-    private val userRepository: UserRepository ,
-    
-    private val notificationService: NotificationService
-    
-) {
-
-    fun register(email: String, password: String){
-        userRepository.saveUser(email, password)
-        notificationService.send(email,"abc@gmail.com","user registered successfully")
+    @ActivityScope
+    @MessageQualifier
+    @Provides
+    fun getMessageService(retryCount : Int )  : NotificationService {
+        return MessageService(retryCount)
     }
 
 }
 
+=======AppComponent.kt=======
 
 
-Step 2:
+@Singleton
 
-=>Consumers will tell Component to create obj , 
-Component will create obj with the help of Constructor & Modules(containing abstract class, interface, builder pattern( In case of roomdb, retrofit)).
-but we cannot instantiate an interface i.e we cannot create obj. 
-Generally, it contains abstract methods (except default and static methods introduced in Java8), which are incomplete
+@Component(modules = [AnalyticsModule::class])
 
+interface AppComponent {
 
+    //fun getAnalyticsService(): AnalyticsService
 
-interface NotificationService{
-
-    fun send(to: String, from: String, body: String)
+     fun getUserRegistrationComponentFactory() : UserRegistrationComponent.Factory
+    //use factory to access the SUB COMPONENT
+    
     
 }
 
-class EmailService  @Inject constructor () : NotificationService {
+=======MainActivity.kt=======
 
-    override fun send(to: String, from: String, body: String){
-    
-        Log.d( "email sendinggggg","Email Send")
-        
+
+        val appComponent = (application as UserApplication).appComponent //Application level scope
+        val userRegistrationComponent = appComponent.getUserRegistrationComponentFactory().create(3)
+        userRegistrationComponent.inject(this)
+
+
+
+
+After:
+
+=======UserRegistrationComponent.kt======== 
+
+
+@ActivityScope
+
+@Subcomponent(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+
+interface UserRegistrationComponent {
+
+    fun inject(mainActivity: MainActivity)
+
+   // @Subcomponent.Factory
+   
+   //  interface Factory{
+   
+   //     fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
+   
+   // }
+   
+}
+
+
+=======NotificationServiceModules.kt======
+
+
+@Module
+class NotificationServiceModules() {
+
+
+    @ActivityScope
+    @MessageQualifier
+    @Provides
+    fun getMessageService( )  : NotificationService {
+        return MessageService(3)
     }
+
+
 }
 
-class MessageService  @Inject constructor () : NotificationService {
+===========AppComponent.kt====
 
-    override fun send(to: String, from: String, body: String){
+@Singleton
+
+@Component(modules = [AnalyticsModule::class])
+
+interface AppComponent {
+
+    fun getUserRegistrationComponent() : UserRegistrationComponent
     
-        Log.d( "Message sendinggggg","Message Send")
-        
-    }
 }
+
+==========MainActivity.kt====
+
+        val appComponent = (application as UserApplication).appComponent //Application level scope
+        val userRegistrationComponent = appComponent.getUserRegistrationComponent()
+        userRegistrationComponent.inject(this)
+
+
+
 
