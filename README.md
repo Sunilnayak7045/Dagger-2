@@ -1,4 +1,4 @@
-# Dagger-2cSub Component
+# Dagger-2 Sub Component
 
 Before:
 
