@@ -33,7 +33,12 @@ class MainActivity : AppCompatActivity() {
 
 
         val appComponent = (application as UserApplication).appComponent //Application level scope
-        val userRegistrationComponent = DaggerUserRegistrationComponent.factory().create(3, appComponent)
+        //val userRegistrationComponent = DaggerUserRegistrationComponent.factory().create(3, appComponent)
+        // no need of DaggerUserRegistrationComponent bcoz we are accessing UserRegistrationComponent through AppComponent
+
+        val userRegistrationComponent = appComponent.getUserRegistrationComponentFactory().create(3)
+
+
         userRegistrationComponent.inject(this)
 
 

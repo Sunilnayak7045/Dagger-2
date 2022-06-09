@@ -2,11 +2,13 @@ package com.example.dagger
 
 import dagger.BindsInstance
 import dagger.Component
+import dagger.Subcomponent
 import javax.inject.Singleton
 
 
 @ActivityScope
-@Component(dependencies = [AppComponent::class],modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+//@Component(dependencies = [AppComponent::class], modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+@Subcomponent(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
 interface UserRegistrationComponent {
 
     //methods  that will provide the reqd dependency
@@ -22,9 +24,14 @@ interface UserRegistrationComponent {
     fun inject(mainActivity: MainActivity)
 
 
-    @Component.Factory
+//    @Component.Factory
+//    interface Factory{
+//        fun create( @BindsInstance retryCount: Int, appComponent: AppComponent) : UserRegistrationComponent
+//    }
+
+    @Subcomponent.Factory
     interface Factory{
-        fun create( @BindsInstance retryCount: Int, appComponent: AppComponent) : UserRegistrationComponent
+        fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
     }
     //appComponent added because
     //Factory depends on component & component depends  on obj
