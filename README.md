@@ -1,4 +1,4 @@
-# Dagger-2 Component Scopes (Activity and Application Level Components) & Dagger 2 Component dependencies
+# Dagger-2 Component Scopes (Activity and Application Level Components) & Component dependencies
 
 
 Scenario :
@@ -15,14 +15,14 @@ Code flow
 *whenever we want to make UserRegistrationComponent we will use factory
 
 
-===================================== UserRepository.kt ===================================
+===================================== UserRepository.kt===================================
 
--------------------------
-Notification Service & User Repository 
-depends on Analytics Service
--------------------------
+--->  Notification Service & User Repository 
+      depends on Analytics Service
+
 
 @ActivityScope
+
 class SqlRepository  @Inject constructor (val analyticsService: AnalyticsService) : UserRepository{
 
     override fun saveUser(email: String, password: String){
@@ -33,16 +33,19 @@ class SqlRepository  @Inject constructor (val analyticsService: AnalyticsService
 }
 
 
-===================================== UserRegistrationComponent.kt ===================================
+===================================== UserRegistrationComponent.kt ===========================
 
 
--------------------------
-Notification Service & User Repository 
+---> Notification Service & User Repository 
 depends on Analytics Service so in Factory the dependencies is passes AppComponent( AppComponent having analyticsService obj)
--------------------------
+
+
+
 
 @ActivityScope
-@Component(dependencies = [AppComponent::class],modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+
+@Component(dependencies = [AppComponent::class],modules =[UserRepositoryModules::class,NotificationServiceModules::class])
+
 interface UserRegistrationComponent {
 
     fun inject(mainActivity: MainActivity)
@@ -67,9 +70,11 @@ interface UserRegistrationComponent {
         //first we access the appComponent
 
         val userRegistrationComponent = DaggerUserRegistrationComponent.factory().create(3, appComponent)
+        
         //To make the UserRegistrationComponent  we had called the factory, inside create we had passed the appComponent
         //now dagger returned the UserRegistrationComponent  
         // then we had injected
+        
         userRegistrationComponent.inject(this)
 
 
