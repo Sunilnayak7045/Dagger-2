@@ -17,3 +17,11 @@ Branch flow to be followed :
 7.Pass-Runtime-Value.
 
 8.BindsInstance(Pass-Runtime-Value).
+
+9.Singleton(Activity-level)
+
+10.Singleton(Application-level)
+
+11.Singleton-Custom-Annotation
+
+12.Scopes
