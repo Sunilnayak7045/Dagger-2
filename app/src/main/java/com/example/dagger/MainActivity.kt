@@ -36,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         //val userRegistrationComponent = DaggerUserRegistrationComponent.factory().create(3, appComponent)
         // no need of DaggerUserRegistrationComponent bcoz we are accessing UserRegistrationComponent through AppComponent
 
-        val userRegistrationComponent = appComponent.getUserRegistrationComponentFactory().create(3)
+        //val userRegistrationComponent = appComponent.getUserRegistrationComponentFactory().create(3)
+        val userRegistrationComponent = appComponent.getUserRegistrationComponent()
 
 
         userRegistrationComponent.inject(this)

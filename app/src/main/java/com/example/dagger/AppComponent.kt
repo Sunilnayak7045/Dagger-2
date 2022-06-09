@@ -11,8 +11,11 @@ import javax.inject.Singleton
 interface AppComponent {
     //fun getAnalyticsService(): AnalyticsService
 
-    fun getUserRegistrationComponentFactory() : UserRegistrationComponent.Factory
+    //fun getUserRegistrationComponentFactory() : UserRegistrationComponent.Factory
     //use factory to access the SUB COMPONENT
+
+    fun getUserRegistrationComponent() : UserRegistrationComponent
+    //no factory needed, directly access the SUB COMPONENT
 }
 
 //AppComponent is the parent Component

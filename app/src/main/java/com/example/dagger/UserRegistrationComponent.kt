@@ -29,10 +29,10 @@ interface UserRegistrationComponent {
 //        fun create( @BindsInstance retryCount: Int, appComponent: AppComponent) : UserRegistrationComponent
 //    }
 
-    @Subcomponent.Factory
-    interface Factory{
-        fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
-    }
+//    @Subcomponent.Factory
+//    interface Factory{
+//        fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
+//    }
     //appComponent added because
     //Factory depends on component & component depends  on obj
    // so we need to pass obj to Factory. so that it can return UserRegistrationComponent obj
