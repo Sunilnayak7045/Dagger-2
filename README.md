@@ -1,63 +1,95 @@
-# Dagger-2 Module-Provides-Binds
+# Dagger-2 Sub Component Factory 
 
 
-If a interface has multiple implementation
+*UserRegistrationComponent depends on AppComponent,
+ AppComponent has AnalyticsService obj defined
 
-Step 1:
-When @Inject is called dagger will get confused i.e from NotificationService which implementation should be picked (EmailService  or MessageService)
-it will throw error:
-error: [Dagger/MissingBinding] com.example.dagger.NotificationService cannot be provided without an @Provides-annotated method.
+*SubComponent can directly access the parent Component's obj. 
 
 
+Before: 
 
-class UserRegistrationService @Inject constructor
-(
+============UserRegistrationComponent ========
 
-    private val userRepository: UserRepository ,
-    
-    private val notificationService: NotificationService
-    
-) {
+@ActivityScope
 
-    fun register(email: String, password: String){
-        userRepository.saveUser(email, password)
-        notificationService.send(email,"abc@gmail.com","user registered successfully")
+@Component(dependencies = [AppComponent::class], modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+
+interface UserRegistrationComponent {
+
+    fun inject(mainActivity: MainActivity)
+
+    @Component.Factory
+    interface Factory{
+        fun create( @BindsInstance retryCount: Int, appComponent: AppComponent) : UserRegistrationComponent
     }
 
 }
 
+====================AppComponent.kt=========
 
+@Singleton
 
-Step 2:
+@Component(modules = [AnalyticsModule::class])
 
-=>Consumers will tell Component to create obj , 
-Component will create obj with the help of Constructor & Modules(containing abstract class, interface, builder pattern( In case of roomdb, retrofit)).
-but we cannot instantiate an interface i.e we cannot create obj. 
-Generally, it contains abstract methods (except default and static methods introduced in Java8), which are incomplete
+interface AppComponent {
 
-
-
-interface NotificationService{
-
-    fun send(to: String, from: String, body: String)
+    fun getAnalyticsService(): AnalyticsService
     
 }
 
-class EmailService  @Inject constructor () : NotificationService {
 
-    override fun send(to: String, from: String, body: String){
-    
-        Log.d( "email sendinggggg","Email Send")
-        
+=================MainActivity.kt==========
+
+
+        val appComponent = (application as UserApplication).appComponent //Application level scope
+
+        val userRegistrationComponent = DaggerUserRegistrationComponent.factory().create(3, appComponent)
+
+        userRegistrationComponent.inject(this)
+
+
+
+After:
+
+===========UserRegistrationComponent ========
+
+@ActivityScope
+@Subcomponent(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+
+interface UserRegistrationComponent {
+
+    fun inject(mainActivity: MainActivity)
+
+    @Subcomponent.Factory
+    interface Factory{
+        fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
     }
+
 }
 
-class MessageService  @Inject constructor () : NotificationService {
+====================AppComponent.kt=========
 
-    override fun send(to: String, from: String, body: String){
-    
-        Log.d( "Message sendinggggg","Message Send")
-        
-    }
+@Singleton
+
+@Component(modules = [AnalyticsModule::class])
+
+interface AppComponent {
+
+ fun getUserRegistrationComponentFactory() : UserRegistrationComponent.Factory
+    //use factory to access the obj through SUB COMPONENT
 }
+
+=================MainActivity.kt==========
+
+
+        val appComponent = (application as UserApplication).appComponent //Application level scope
+
+        //val userRegistrationComponent = DaggerUserRegistrationComponent.factory().create(3, appComponent)
+
+        // no need of DaggerUserRegistrationComponent bcoz we are accessing UserRegistrationComponent through AppComponent
+
+        val userRegistrationComponent = appComponent.getUserRegistrationComponentFactory().create(3) //appComponent can either give sub component / factory
+
+        userRegistrationComponent.inject(this)
 
