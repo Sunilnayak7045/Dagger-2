@@ -1,63 +1,81 @@
-# Dagger-2 Module-Provides-Binds
+# Dagger-2 Component Scopes (Activity and Application Level Components) & Dagger 2 Component dependencies
 
 
-If a interface has multiple implementation
+Scenario :
+when user register some events should get triggered so analytics is used 
 
-Step 1:
-When @Inject is called dagger will get confused i.e from NotificationService which implementation should be picked (EmailService  or MessageService)
-it will throw error:
-error: [Dagger/MissingBinding] com.example.dagger.NotificationService cannot be provided without an @Provides-annotated method.
+Code flow 
 
+*application class consists Appcomponent which is  define there,
+ Appcomponent  will provide AnalyticsService obj, 
+ whenever we want  AnalyticsService obj we will refer to Appcomponent.  
 
+*UserRegistrationComponent depends on analyticsService obj, so we provide AppComponent inside AppComponent we will get analyticsService obj
 
-class UserRegistrationService @Inject constructor
-(
-
-    private val userRepository: UserRepository ,
-    
-    private val notificationService: NotificationService
-    
-) {
-
-    fun register(email: String, password: String){
-        userRepository.saveUser(email, password)
-        notificationService.send(email,"abc@gmail.com","user registered successfully")
-    }
-
-}
+*whenever we want to make UserRegistrationComponent we will use factory
 
 
+===================================== UserRepository.kt ===================================
 
-Step 2:
+-------------------------
+Notification Service & User Repository 
+depends on Analytics Service
+-------------------------
 
-=>Consumers will tell Component to create obj , 
-Component will create obj with the help of Constructor & Modules(containing abstract class, interface, builder pattern( In case of roomdb, retrofit)).
-but we cannot instantiate an interface i.e we cannot create obj. 
-Generally, it contains abstract methods (except default and static methods introduced in Java8), which are incomplete
+@ActivityScope
+class SqlRepository  @Inject constructor (val analyticsService: AnalyticsService) : UserRepository{
 
+    override fun saveUser(email: String, password: String){
+       Log.d( "DB","User saved in Sql db ")
+        analyticsService.trackEvent("Save User","created in sql")
 
-
-interface NotificationService{
-
-    fun send(to: String, from: String, body: String)
-    
-}
-
-class EmailService  @Inject constructor () : NotificationService {
-
-    override fun send(to: String, from: String, body: String){
-    
-        Log.d( "email sendinggggg","Email Send")
-        
     }
 }
 
-class MessageService  @Inject constructor () : NotificationService {
 
-    override fun send(to: String, from: String, body: String){
-    
-        Log.d( "Message sendinggggg","Message Send")
-        
+===================================== UserRegistrationComponent.kt ===================================
+
+
+-------------------------
+Notification Service & User Repository 
+depends on Analytics Service so in Factory the dependencies is passes AppComponent( AppComponent having analyticsService obj)
+-------------------------
+
+@ActivityScope
+@Component(dependencies = [AppComponent::class],modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+interface UserRegistrationComponent {
+
+    fun inject(mainActivity: MainActivity)
+
+    @Component.Factory
+    interface Factory{
+        fun create( @BindsInstance retryCount: Int, appComponent: AppComponent) : UserRegistrationComponent
     }
+    //appComponent added because
+    //Factory depends on component & component needs/depends  on obj
+   // so we need to pass obj to Factory. so that it can return UserRegistrationComponent obj
+
+
 }
 
+
+
+===================================== MainActivity.kt ===================================
+
+
+        val appComponent = (application as UserApplication).appComponent
+        //first we access the appComponent
+
+        val userRegistrationComponent = DaggerUserRegistrationComponent.factory().create(3, appComponent)
+        //To make the UserRegistrationComponent  we had called the factory, inside create we had passed the appComponent
+        //now dagger returned the UserRegistrationComponent  
+        // then we had injected
+        userRegistrationComponent.inject(this)
+
+
+==============================================================================
+
+Therefore, here activity level component depends on application level component
+
+
+==============================================================================
