@@ -1,5 +1,8 @@
 # Dagger-2 Sub Component
 
+Sub Component Factory (pass the run time value via factory)
+Sub Component (pass the hardcoded value)
+
 Before:
 
 ========UserRegistrationComponent.kt===== 
