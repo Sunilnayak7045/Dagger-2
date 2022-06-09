@@ -15,7 +15,7 @@ Code flow
 *whenever we want to make UserRegistrationComponent we will use factory
 
 
-===================================== UserRepository.kt===================================
+===================== UserRepository.kt=================
 
 --->  Notification Service & User Repository 
       depends on Analytics Service
@@ -33,7 +33,7 @@ class SqlRepository  @Inject constructor (val analyticsService: AnalyticsService
 }
 
 
-===================================== UserRegistrationComponent.kt ===========================
+============= UserRegistrationComponent.kt ==============
 
 
 ---> Notification Service & User Repository 
@@ -63,7 +63,7 @@ interface UserRegistrationComponent {
 
 
 
-===================================== MainActivity.kt ===================================
+======================== MainActivity.kt ===================
 
 
         val appComponent = (application as UserApplication).appComponent
@@ -78,9 +78,9 @@ interface UserRegistrationComponent {
         userRegistrationComponent.inject(this)
 
 
-==============================================================================
+========================================================
 
 Therefore, here activity level component depends on application level component
 
 
-==============================================================================
+=========================================================
