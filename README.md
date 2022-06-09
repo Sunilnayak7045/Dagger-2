@@ -1,4 +1,4 @@
-# Dagger-2 Sub Component Factory 
+# Dagger-2 Sub Component Factory (pass the run time value via factory)
 
 
 *UserRegistrationComponent depends on AppComponent,
