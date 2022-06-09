@@ -5,8 +5,8 @@ import dagger.Component
 import javax.inject.Singleton
 
 
-@ApplicationScope
-@Component(modules = [UserRepositoryModules::class,NotificationServiceModules::class])
+@ActivityScope
+@Component(dependencies = [AppComponent::class],modules = [UserRepositoryModules::class,NotificationServiceModules::class])
 interface UserRegistrationComponent {
 
     //methods  that will provide the reqd dependency
@@ -24,9 +24,14 @@ interface UserRegistrationComponent {
 
     @Component.Factory
     interface Factory{
-        fun create( @BindsInstance retryCount: Int) : UserRegistrationComponent
+        fun create( @BindsInstance retryCount: Int, appComponent: AppComponent) : UserRegistrationComponent
     }
-   // Factory will return UserRegistrationComponent obj,
+    //appComponent added because
+    //Factory depends on component & component depends  on obj
+   // so we need to pass obj to Factory. so that it can return UserRegistrationComponent obj
+
+
+    // Factory will return UserRegistrationComponent obj,
     // whenever we want to pass runtime value, pass it in a create method
     // now, UserRegistrationComponent will have Int value, whenever dagger needs Int value it will use this properties
     // whenever the Component is ready, it will have the dynamic value

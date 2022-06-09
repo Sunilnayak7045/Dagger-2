@@ -27,7 +27,7 @@ abstract class UserRepositoryModules {
 
 //    Method 3 to return  SqlRepository() obj via @Binds
 
-    @ApplicationScope
+    @ActivityScope
      @Binds
     abstract fun getSQLRepository(sqlRepository: SqlRepository) : UserRepository
 

@@ -26,8 +26,16 @@ class MainActivity : AppCompatActivity() {
 //            .notificationServiceModules(NotificationServiceModules(3))
 //            .build()
 //        component.inject(this)
-        val component = (application as UserApplication).userRegistrationComponent
-        component.inject(this)
+
+
+       // val component = (application as UserApplication).userRegistrationComponent
+       // component.inject(this)
+
+
+        val appComponent = (application as UserApplication).appComponent //Application level scope
+        val userRegistrationComponent = DaggerUserRegistrationComponent.factory().create(3, appComponent)
+        userRegistrationComponent.inject(this)
+
 
         //val userRegistrationService = component.getUserRegistrationService() // not reqd bcoz it is handled by inject method
         userRegistrationService.register("test123@gmail.com","1111")

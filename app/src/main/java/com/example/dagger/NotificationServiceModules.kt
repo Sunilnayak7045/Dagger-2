@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class NotificationServiceModules() {
 
 
-    @ApplicationScope
+    @ActivityScope
     @MessageQualifier
     //just a normal function that will just return object
     @Provides
